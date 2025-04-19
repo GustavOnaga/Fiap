@@ -1,8 +1,2 @@
-jhkhjklhlçkç~çl 4
-
-l~llç4]
-
-~]çlçl
-
-l,kç
+# Documentação dos projetos referentes aos Trabalhos da Pós
 
