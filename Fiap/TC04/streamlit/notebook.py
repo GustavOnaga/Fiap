@@ -9,10 +9,10 @@ def render():
         layout="wide"
     )
 
-    st.title("Análise Exploratória dos Dados")
+    st.title("Notebook utilizado para a criação do modelo")
     st.markdown("Notebook convertido para HTML.")
 
-    html_path = Path("Tech_Challange_04.html")
+    html_path = Path("Tech_Challenge_04.html")
 
     if html_path.exists():
         with open(html_path, "r", encoding="utf-8") as f:
@@ -23,4 +23,4 @@ def render():
             )
     else:
         st.error("Arquivo Tech_Challange_04.html não encontrado.")
-        
+
