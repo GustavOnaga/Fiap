@@ -14,7 +14,7 @@ from sklearn.metrics import accuracy_score, confusion_matrix, ConfusionMatrixDis
 
 from xgboost import XGBClassifier
 
-def random_forest(obesity):
+def random_forest(obesity,age=None, weight=None, faf=None, family_history=None, favc=None, caec=None, smoke=None):
 
     #Tratameto dos dados
     obesity['condition'] = obesity['Obesity'].str.contains('Obesity', case=False, na=False).astype(int)
@@ -64,4 +64,37 @@ def random_forest(obesity):
     # Fazer previsões
     y_pred = model_rf.predict(x_test)
 
-    return 'teste'
+    # Avaliação da acuracia
+    acc = accuracy_score(y_test, model_rf.predict(x_test))
+
+# Previsão para novo paciente (se parâmetros forem informados)
+    pred = None
+    if all(param is not None for param in [age, weight, faf, family_history, favc, caec, smoke]):
+
+        novo_paciente = pd.DataFrame([{
+            'Age': age,
+            'Weight_round': round(weight, 1),
+            'FAF': faf,
+            'family_history': 1 if str(family_history).lower() == 'yes' else 0,
+            'FAVC': 1 if str(favc).lower() == 'yes' else 0,
+            'SMOKE': 1 if str(smoke).lower() == 'yes' else 0,
+            'CAEC': caec
+        }])
+
+        # One-hot encoding da coluna CAEC do novo paciente
+
+        novo_paciente['CAEC'] = novo_paciente['CAEC'].replace({'no': 0, 'Sometimes': 1,'Frequently':2,'Always':3})
+
+        encoded_new = encoder.transform(novo_paciente[['CAEC']])
+        df_encoded_new = pd.DataFrame(encoded_new, columns=encoder.get_feature_names_out(['CAEC']))
+
+        novo_paciente = pd.concat([novo_paciente.drop(columns=['CAEC']), df_encoded_new.drop(columns=['CAEC_3'], errors='ignore')], axis=1)
+
+        # Garante que o novo paciente tenha as mesmas colunas do treino
+        novo_paciente = novo_paciente.reindex(columns=x.columns, fill_value=0)
+
+        # Predição
+
+        pred = 'Possui pré disposição para a obesidade' if int(model_rf.predict(novo_paciente)[0]) == 0 else 'Não possui pré disposição para a obesidade'
+
+    return {'predicao': pred, 'acuracia': acc}
