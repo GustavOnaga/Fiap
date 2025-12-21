@@ -22,5 +22,5 @@ def render():
                 scrolling=True
             )
     else:
-        st.error("Arquivo Tech_Challange_04.html não encontrado.")
+        st.error("Arquivo Tech_Challenge_04.html não encontrado.")
 
